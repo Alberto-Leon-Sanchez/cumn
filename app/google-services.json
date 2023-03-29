@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1093843315314",
+    "project_id": "cumn-cc19b",
+    "storage_bucket": "cumn-cc19b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093843315314:android:06d42635a2e5129ae2f0eb",
+        "android_client_info": {
+          "package_name": "com.example.cumn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1093843315314-1cevnma2kvsjg72lbv3c6dv95957i5t2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6TiNLUQOar4p6Kbw3NpDCox4xtkIQkY4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1093843315314-1cevnma2kvsjg72lbv3c6dv95957i5t2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
