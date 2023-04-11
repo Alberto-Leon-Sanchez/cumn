@@ -142,8 +142,7 @@ public class AuthenticationActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "signInWithCredential:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        startActivity(new Intent(AuthenticationActivity.this, UserProfileActivity.class));
+                        startActivity(new Intent(AuthenticationActivity.this, MainActivity.class));
                         finish();
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
