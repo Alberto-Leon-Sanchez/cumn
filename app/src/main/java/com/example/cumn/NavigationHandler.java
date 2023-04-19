@@ -2,9 +2,6 @@ package com.example.cumn;
 
 import android.content.Context;
 import android.content.Intent;
-import android.view.MenuItem;
-
-import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -14,9 +11,14 @@ public class NavigationHandler {
         bottomNav.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.button1:
-                    context.startActivity(new Intent(context, MainActivity.class));
+                    if (!(context instanceof MainActivity)) {
+                        context.startActivity(new Intent(context, MainActivity.class));
+                    }
                     break;
                 case R.id.button2:
+                    if (!(context instanceof RecipeActivity)) {
+                        context.startActivity(new Intent(context, RecipeActivity.class));
+                    }
                     break;
                 case R.id.button3:
                     break;

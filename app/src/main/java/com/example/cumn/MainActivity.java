@@ -5,34 +5,34 @@ import static android.content.ContentValues.TAG;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cumn.api.SpoonacularApi;
 import com.example.cumn.models.Ingredient;
+import com.example.cumn.models.IngredientR;
 import com.example.cumn.models.IngredientsResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +46,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private CardItemAdapter cardItemAdapter;
-    private List<Ingredient> cardTextList;
+    private CardIngredientAdapter cardIngredientAdapter;
+    private List<IngredientR> cardTextList;
     private FirebaseDatabase database;
     private FirebaseAuth mauth;
 
@@ -62,17 +62,34 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+        database = FirebaseDatabase.getInstance("https://cumn-cc19b-default-rtdb.europe-west1.firebasedatabase.app");
+        mauth = FirebaseAuth.getInstance();
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
         NavigationHandler.setupNavigation(this, bottomNav);
-
-        FloatingActionButton addButton = findViewById(R.id.add_button);
-        addButton.setOnClickListener(addButtonClickListener);
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         cardTextList = new ArrayList<>();
-        cardItemAdapter = new CardItemAdapter(cardTextList);
-        recyclerView.setAdapter(cardItemAdapter);
+
+        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
+        ref.addValueEventListener(new ValueEventListener() {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                cardTextList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    IngredientR ingredientR = snapshot.getValue(IngredientR.class);
+                    cardTextList.add(ingredientR);
+                }
+                cardIngredientAdapter.notifyDataSetChanged();
+            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "loadCardTextList:onCancelled", databaseError.toException());
+                Toast.makeText(MainActivity.this, "Failed to load card text list.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        cardIngredientAdapter = new CardIngredientAdapter(cardTextList);
+        recyclerView.setAdapter(cardIngredientAdapter);
 
         SearchView searchView = findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -90,27 +107,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        database = FirebaseDatabase.getInstance("https://cumn-cc19b-default-rtdb.europe-west1.firebasedatabase.app");
-        mauth = FirebaseAuth.getInstance();
+        cardIngredientAdapter.setOnEditClickListener(position -> {
+            IngredientR ingredientR = cardTextList.get(position);
+            int currentQuantity = ingredientR.getQuantity();
+            showEditQuantityDialog(position, currentQuantity);
+        });
+
+        cardIngredientAdapter.setOnTrashClickListener(position -> {
+            deleteCard(position);
+        });
+
     }
-
-    private View.OnClickListener addButtonClickListener = v -> {
-        addCard("New Card Item");
-    };
-
-    private void addCard(String text) {
-        //cardTextList.add(text);
-        cardItemAdapter.notifyItemInserted(cardTextList.size() - 1);
-        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
-        ref.setValue(cardTextList);
-    }
-
-    private void addCar(String ingredient, String amount){
-        cardItemAdapter.notifyItemInserted(cardTextList.size() - 1);
-        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
-        ref.setValue(cardTextList);
-    }
-
     private void searchIngredients(String query) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.spoonacular.com/")
@@ -144,38 +151,99 @@ public class MainActivity extends AppCompatActivity {
         builder.setView(view);
 
         RecyclerView dialogRecyclerView = view.findViewById(R.id.dialog_recycler_view);
-        EditText quantityEditText = view.findViewById(R.id.quantity_edit_text);
+        TextView quantityTextView = view.findViewById(R.id.quantity_text_view);
+        Button decreaseButton = view.findViewById(R.id.decrease_button);
+        Button increaseButton = view.findViewById(R.id.increase_button);
         Button selectButton = view.findViewById(R.id.select_button);
 
-        CardItemAdapter dialogCardItemAdapter = new CardItemAdapter(ingredients);
+        decreaseButton.setOnClickListener(v -> {
+            int currentQuantity = Integer.parseInt(quantityTextView.getText().toString());
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                quantityTextView.setText(String.valueOf(currentQuantity));
+            }
+        });
+
+        increaseButton.setOnClickListener(v -> {
+            int currentQuantity = Integer.parseInt(quantityTextView.getText().toString());
+            currentQuantity++;
+            quantityTextView.setText(String.valueOf(currentQuantity));
+        });
+
+        IngredientAdapter ingredientAdapter = new IngredientAdapter(ingredients);
         dialogRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        dialogRecyclerView.setAdapter(dialogCardItemAdapter);
+        dialogRecyclerView.setAdapter(ingredientAdapter);
+
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.show();
 
         selectButton.setOnClickListener(v -> {
-            int selectedPosition = dialogCardItemAdapter.getSelectedPosition();
+            int selectedPosition = ingredientAdapter.getSelectedPosition();
             if (selectedPosition != -1) {
                 Ingredient selectedIngredient = ingredients.get(selectedPosition);
-                String quantity = quantityEditText.getText().toString().trim();
-                if (!quantity.isEmpty()) {
-                    double quantityValue = Double.parseDouble(quantity);
-                    addCard(selectedIngredient, quantityValue);
-                    alertDialog.dismiss();
-                } else {
-                    Toast.makeText(MainActivity.this, "Please enter a quantity", Toast.LENGTH_SHORT).show();
-                }
+                int quantityValue = Integer.parseInt(quantityTextView.getText().toString());
+                addCard(selectedIngredient, quantityValue);
+                alertDialog.dismiss();
             } else {
                 Toast.makeText(MainActivity.this, "Please select an ingredient", Toast.LENGTH_SHORT).show();
             }
         });
 
+    }
+    private void showEditQuantityDialog(int position, int currentQuantity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_edit_quantity, null);
+        builder.setView(view);
+
+        Button decreaseButton = view.findViewById(R.id.decrease_button);
+        Button increaseButton = view.findViewById(R.id.increase_button);
+        Button saveButton = view.findViewById(R.id.save_button);
+        TextView quantityTextView = view.findViewById(R.id.quantity_text_view);
+
+        quantityTextView.setText(String.valueOf(currentQuantity));
+
+        decreaseButton.setOnClickListener(v -> {
+            int newQuantity = Integer.parseInt(quantityTextView.getText().toString());
+            if (newQuantity > 1) {
+                newQuantity--;
+                quantityTextView.setText(String.valueOf(newQuantity));
+            }
+        });
+
+        increaseButton.setOnClickListener(v -> {
+            int newQuantity = Integer.parseInt(quantityTextView.getText().toString());
+            newQuantity++;
+            quantityTextView.setText(String.valueOf(newQuantity));
+        });
+
+        AlertDialog alertDialog = builder.create();
         alertDialog.show();
+
+        saveButton.setOnClickListener(v -> {
+            int newQuantity = Integer.parseInt(quantityTextView.getText().toString());
+            updateIngredientQuantity(position, newQuantity);
+            alertDialog.dismiss();
+        });
+    }
+    private void updateIngredientQuantity(int position, int newQuantity) {
+        IngredientR ingredient = cardTextList.get(position);
+        ingredient.setQuantity(newQuantity);
+        cardIngredientAdapter.notifyItemChanged(position);
+        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
+        ref.setValue(cardTextList);
     }
 
     private void addCard(Ingredient selectedIngredient, double quantityValue) {
-        cardTextList.add(selectedIngredient);
-        cardItemAdapter.notifyItemInserted(cardTextList.size() - 1);
+        cardTextList.add(new IngredientR(selectedIngredient, (int) quantityValue));
+        cardIngredientAdapter.notifyItemInserted(cardTextList.size() - 1);
+        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
+        ref.setValue(cardTextList);
+    }
+
+    private void deleteCard(int position) {
+        cardTextList.remove(position);
+        cardIngredientAdapter.notifyItemRemoved(position);
         DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
         ref.setValue(cardTextList);
     }

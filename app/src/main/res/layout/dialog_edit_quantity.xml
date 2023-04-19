@@ -5,18 +5,19 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dialog_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="vertical" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Quantity"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingTop="16dp">
 
         <Button
             android:id="@+id/decrease_button"
@@ -39,12 +40,15 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/round_button_background"
-            android:text="+" />
+            android:text="+"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/select_button"
+        android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select" />
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:text="Save" />
 </LinearLayout>

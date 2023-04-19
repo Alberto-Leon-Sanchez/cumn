@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">CUMN</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
+    <string name="trash_icon">Trash icon</string>
+    <string name="edit_icon">Edit icon</string>
+
 
 </resources>

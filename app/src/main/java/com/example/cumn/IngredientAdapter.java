@@ -14,22 +14,22 @@ import com.example.cumn.models.Ingredient;
 
 import java.util.List;
 
-public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.CardViewHolder> {
+public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
 
     private List<Ingredient> ingredients;
     private int selectedPosition = -1;
 
-    public CardItemAdapter(List<Ingredient> ingredients) {
+    public IngredientAdapter(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
     @NonNull
-    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
-        return new CardViewHolder(view);
+    public IngredientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_api, parent, false);
+        return new IngredientViewHolder(view);
     }
 
-    public void onBindViewHolder(@NonNull CardViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull IngredientViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Ingredient ingredient = ingredients.get(position);
         holder.title.setText(ingredient.getName());
         holder.itemView.setOnClickListener(v -> {
@@ -38,7 +38,6 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.CardVi
             notifyItemChanged(selectedPosition);
         });
 
-        // Highlight the selected item
         if (position == selectedPosition) {
             holder.itemView.setBackgroundColor(Color.parseColor("#E0E0E0"));
         } else {
@@ -54,16 +53,13 @@ public class CardItemAdapter extends RecyclerView.Adapter<CardItemAdapter.CardVi
         return ingredients.size();
     }
 
-    public class CardViewHolder extends RecyclerView.ViewHolder {
+    public class IngredientViewHolder extends RecyclerView.ViewHolder {
 
         TextView title;
-        TextView quantity;
 
-        public CardViewHolder(@NonNull View itemView) {
+        public IngredientViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.card_title);
-            quantity = itemView.findViewById(R.id.card_quantity);
         }
     }
 }
-
