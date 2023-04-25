@@ -12,7 +12,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,12 +19,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cumn.adapters.SafeIngredientsAdapter;
+import com.example.cumn.adapters.SearchIngredientAdapter;
 import com.example.cumn.api.SpoonacularApi;
 import com.example.cumn.models.Ingredient;
 import com.example.cumn.models.IngredientR;
 import com.example.cumn.models.IngredientsResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +46,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private CardIngredientAdapter cardIngredientAdapter;
+    private SafeIngredientsAdapter safeIngredientsAdapter;
     private List<IngredientR> cardTextList;
     private FirebaseDatabase database;
     private FirebaseAuth mauth;
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     IngredientR ingredientR = snapshot.getValue(IngredientR.class);
                     cardTextList.add(ingredientR);
                 }
-                cardIngredientAdapter.notifyDataSetChanged();
+                safeIngredientsAdapter.notifyDataSetChanged();
             }
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.w(TAG, "loadCardTextList:onCancelled", databaseError.toException());
@@ -88,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cardIngredientAdapter = new CardIngredientAdapter(cardTextList);
-        recyclerView.setAdapter(cardIngredientAdapter);
+        safeIngredientsAdapter = new SafeIngredientsAdapter(cardTextList);
+        recyclerView.setAdapter(safeIngredientsAdapter);
 
         SearchView searchView = findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -107,13 +107,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cardIngredientAdapter.setOnEditClickListener(position -> {
+        safeIngredientsAdapter.setOnEditClickListener(position -> {
             IngredientR ingredientR = cardTextList.get(position);
             int currentQuantity = ingredientR.getQuantity();
             showEditQuantityDialog(position, currentQuantity);
         });
 
-        cardIngredientAdapter.setOnTrashClickListener(position -> {
+        safeIngredientsAdapter.setOnTrashClickListener(position -> {
             deleteCard(position);
         });
 
@@ -170,16 +170,16 @@ public class MainActivity extends AppCompatActivity {
             quantityTextView.setText(String.valueOf(currentQuantity));
         });
 
-        IngredientAdapter ingredientAdapter = new IngredientAdapter(ingredients);
+        SearchIngredientAdapter searchIngredientAdapter = new SearchIngredientAdapter(ingredients);
         dialogRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        dialogRecyclerView.setAdapter(ingredientAdapter);
+        dialogRecyclerView.setAdapter(searchIngredientAdapter);
 
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
 
         selectButton.setOnClickListener(v -> {
-            int selectedPosition = ingredientAdapter.getSelectedPosition();
+            int selectedPosition = searchIngredientAdapter.getSelectedPosition();
             if (selectedPosition != -1) {
                 Ingredient selectedIngredient = ingredients.get(selectedPosition);
                 int quantityValue = Integer.parseInt(quantityTextView.getText().toString());
@@ -229,21 +229,21 @@ public class MainActivity extends AppCompatActivity {
     private void updateIngredientQuantity(int position, int newQuantity) {
         IngredientR ingredient = cardTextList.get(position);
         ingredient.setQuantity(newQuantity);
-        cardIngredientAdapter.notifyItemChanged(position);
+        safeIngredientsAdapter.notifyItemChanged(position);
         DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
         ref.setValue(cardTextList);
     }
 
     private void addCard(Ingredient selectedIngredient, double quantityValue) {
         cardTextList.add(new IngredientR(selectedIngredient, (int) quantityValue));
-        cardIngredientAdapter.notifyItemInserted(cardTextList.size() - 1);
+        safeIngredientsAdapter.notifyItemInserted(cardTextList.size() - 1);
         DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
         ref.setValue(cardTextList);
     }
 
     private void deleteCard(int position) {
         cardTextList.remove(position);
-        cardIngredientAdapter.notifyItemRemoved(position);
+        safeIngredientsAdapter.notifyItemRemoved(position);
         DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
         ref.setValue(cardTextList);
     }

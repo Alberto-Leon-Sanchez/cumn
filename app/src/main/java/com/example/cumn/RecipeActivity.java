@@ -1,25 +1,22 @@
 package com.example.cumn;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.cumn.NavigationHandler;
-import com.example.cumn.R;
+import com.example.cumn.adapters.RecipeIngredientsAdapter;
 import com.example.cumn.adapters.RecipeAdapter;
 import com.example.cumn.api.SpoonacularApi;
 import com.example.cumn.models.IngredientR;
-import com.example.cumn.models.IngredientsResponse;
+import com.example.cumn.models.IngredientRecipe;
 import com.example.cumn.models.Recipe;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,7 +31,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RecipeActivity extends AppCompatActivity {
+public class RecipeActivity extends AppCompatActivity implements RecipeAdapter.OnCardClickListener{
 
     private RecyclerView recyclerView;
     private List<Recipe> recipeList;
@@ -76,7 +73,14 @@ public class RecipeActivity extends AppCompatActivity {
                     IngredientR ingredientR = snapshot.getValue(IngredientR.class);
                     ingredients.add(ingredientR.getName());
                 }
-                String ingredientsString = String.join(",", ingredients);
+
+                String ingredientsString;
+
+                if (ingredients.size() == 0) {
+                    ingredientsString = "pork,rice,carrot,pepper,garlic,ginger,soy sauce,sesame oil,sesame seeds,green onion,egg,water";
+                } else {
+                    ingredientsString = String.join(",", ingredients);
+                }
 
                 Call<List<Recipe>> call = api.findRecipesByIngredients("05b03e6e38be4044854648b70d8b126e", ingredientsString, 10, false, 2, false);
                 call.enqueue(new Callback<List<Recipe>>() {
@@ -84,7 +88,7 @@ public class RecipeActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                         if (response.isSuccessful()) {
                             recipeList = response.body();
-                            adapter = new RecipeAdapter(recipeList, RecipeActivity.this);
+                            adapter = new RecipeAdapter(recipeList, RecipeActivity.this, RecipeActivity.this);
                             recyclerView.setAdapter(adapter);
 
                         } else {
@@ -103,4 +107,29 @@ public class RecipeActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void showIngredientDialog(List<IngredientRecipe> ingredients) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.ingredient_dialog);
+
+        RecyclerView recyclerView = dialog.findViewById(R.id.ingredients_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        RecipeIngredientsAdapter adapter = new RecipeIngredientsAdapter(ingredients, this);
+        recyclerView.setAdapter(adapter);
+
+        dialog.show();
+    }
+
+    @Override
+    public void onCardClick(int position) {
+        Recipe recipe = recipeList.get(position);
+        List<IngredientRecipe> ingredients = new ArrayList<>();
+        ingredients.addAll(recipe.getUsedIngredients());
+        ingredients.addAll(recipe.getMissedIngredients());
+        ingredients.addAll(recipe.getUnusedIngredients());
+        showIngredientDialog(ingredients);
+    }
+
+
 }

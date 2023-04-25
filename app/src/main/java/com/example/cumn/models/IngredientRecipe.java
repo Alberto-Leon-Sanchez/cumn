@@ -15,4 +15,15 @@ public class IngredientRecipe {
     private List<String> meta;
     private String image;
 
+    public String getName() {
+        return name;
+    }
+
+    public String getOriginal() {
+        return original;
+    }
+
+    public String getImage() {
+        return image;
+    }
 }

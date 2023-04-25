@@ -24,4 +24,16 @@ public class Recipe {
     public String getImage() {
         return image;
     }
+
+    public List<IngredientRecipe> getMissedIngredients() {
+        return missedIngredients;
+    }
+
+    public List<IngredientRecipe> getUsedIngredients() {
+        return usedIngredients;
+    }
+
+    public List<IngredientRecipe> getUnusedIngredients() {
+        return unusedIngredients;
+    }
 }

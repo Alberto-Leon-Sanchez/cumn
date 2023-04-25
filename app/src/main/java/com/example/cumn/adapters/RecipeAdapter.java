@@ -16,14 +16,18 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import retrofit2.Callback;
+
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
-    private List<Recipe> recipes;
+    private OnCardClickListener mListener;
+    private static List<Recipe> recipes;
     private Context context;
 
-    public RecipeAdapter(List<Recipe> recipes, Context context) {
+    public RecipeAdapter(List<Recipe> recipes, Context context, OnCardClickListener listener) {
         this.recipes = recipes;
         this.context = context;
+        this.mListener = listener;
     }
 
     @NonNull
@@ -38,6 +42,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         Recipe recipe = recipes.get(position);
         holder.recipeTitle.setText(recipe.getTitle());
         Picasso.get().load(recipe.getImage()).into(holder.recipeImage);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (mListener != null) {
+                mListener.onCardClick(position);
+            }
+        });
     }
 
     @Override
@@ -54,5 +64,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             recipeImage = itemView.findViewById(R.id.recipe_image);
             recipeTitle = itemView.findViewById(R.id.recipe_title);
         }
+
     }
+
+    public interface OnCardClickListener {
+        void onCardClick(int position);
+    }
+
+
 }

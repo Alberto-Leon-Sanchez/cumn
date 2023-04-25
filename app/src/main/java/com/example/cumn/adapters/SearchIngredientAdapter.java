@@ -1,4 +1,4 @@
-package com.example.cumn;
+package com.example.cumn.adapters;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
@@ -10,16 +10,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.cumn.R;
 import com.example.cumn.models.Ingredient;
 
 import java.util.List;
 
-public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.IngredientViewHolder> {
+public class SearchIngredientAdapter extends RecyclerView.Adapter<SearchIngredientAdapter.IngredientViewHolder> {
 
     private List<Ingredient> ingredients;
     private int selectedPosition = -1;
 
-    public IngredientAdapter(List<Ingredient> ingredients) {
+    public SearchIngredientAdapter(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 

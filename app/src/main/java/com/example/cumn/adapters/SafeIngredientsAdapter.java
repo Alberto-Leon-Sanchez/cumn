@@ -1,6 +1,5 @@
-package com.example.cumn;
+package com.example.cumn.adapters;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,17 +10,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.cumn.models.Ingredient;
+import com.example.cumn.R;
 import com.example.cumn.models.IngredientR;
 
 import java.util.List;
 
-public class CardIngredientAdapter extends RecyclerView.Adapter<CardIngredientAdapter.CardViewHolder> {
+public class SafeIngredientsAdapter extends RecyclerView.Adapter<SafeIngredientsAdapter.CardViewHolder> {
 
     private List<IngredientR> ingredients;
     private int selectedPosition = -1;
 
-    public CardIngredientAdapter(List<IngredientR> ingredients) {
+    public SafeIngredientsAdapter(List<IngredientR> ingredients) {
         this.ingredients = ingredients;
     }
 
