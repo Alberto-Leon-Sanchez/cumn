@@ -13,24 +13,32 @@
         android:theme="@style/Theme.CUMN"
         tools:targetApi="31">
         <activity
-            android:name=".RecipeActivity"
-            android:exported="false"
-            android:theme="@style/Theme.CUMN.NoActionBar" />
-
-        <activity
-            android:name=".AuthenticationActivity"
+            android:name=".EmailAuthenticationActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".FavouriteRecipes"
+            android:exported="false" />
+        <activity
+            android:name=".LogoActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.CUMN.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
+        </activity>
+        <activity
+            android:name=".RecipeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CUMN.NoActionBar" />
+        <activity
+            android:name=".SignInSignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.CUMN.NoActionBar">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

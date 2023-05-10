@@ -4,6 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="16dp"
+    android:layout_margin="8dp"
+    android:background="@drawable/border_with_shadow"
+    android:backgroundTint="@color/beige"
+    android:elevation="4dp"
+    android:clipToPadding="false"
     android:gravity="center_vertical">
 
     <LinearLayout

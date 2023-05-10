@@ -14,7 +14,6 @@ public class IngredientRecipe {
     private String originalName;
     private List<String> meta;
     private String image;
-
     public String getName() {
         return name;
     }
@@ -26,4 +25,9 @@ public class IngredientRecipe {
     public String getImage() {
         return image;
     }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
 }

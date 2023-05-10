@@ -5,35 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     android:padding="16dp"
-    tools:context=".AuthenticationActivity">
+    tools:context=".SignInSignUpActivity">
 
-    <EditText
-        android:id="@+id/email_edit_text"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/app_logo"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Email"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/password_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        android:src="@drawable/saladvegan" />
 
     <Button
-        android:id="@+id/sign_in_button"
+        android:id="@+id/sign_in_sign_up_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/light_beige"
+        android:textColor="@color/black"
         android:text="Sign In"
-        android:layout_marginTop="8dp" />
-
-    <Button
-        android:id="@+id/sign_up_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign Up"
         android:layout_marginTop="8dp" />
 
     <com.google.android.gms.common.SignInButton

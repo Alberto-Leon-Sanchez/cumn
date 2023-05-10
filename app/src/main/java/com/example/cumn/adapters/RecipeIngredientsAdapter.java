@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cumn.R;
 import com.example.cumn.models.IngredientRecipe;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -25,22 +26,29 @@ public class RecipeIngredientsAdapter extends RecyclerView.Adapter<RecipeIngredi
         this.context = context;
     }
 
-    @NonNull
-    @Override
     public IngredientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingredient_item, parent, false);
         return new IngredientViewHolder(view);
     }
 
-    @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
         IngredientRecipe ingredient = ingredients.get(position);
         holder.name.setText(ingredient.getName());
         holder.original.setText(ingredient.getOriginal());
-        Picasso.get().load(ingredient.getImage()).into(holder.image);
+        String imageUrl = ingredient.getImage();
+
+        Picasso.get().load(imageUrl)
+                .into(holder.image, new Callback() {
+                    public void onSuccess() {
+                    }
+                    public void onError(Exception e) {
+                        ViewGroup.LayoutParams layoutParams = holder.image.getLayoutParams();
+                        layoutParams.height = 0;
+                        holder.image.setLayoutParams(layoutParams);
+                    }
+                });
     }
 
-    @Override
     public int getItemCount() {
         return ingredients.size();
     }

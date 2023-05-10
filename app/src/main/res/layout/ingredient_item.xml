@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:backgroundTint="@color/pale_white"
+    android:background="@drawable/border_with_shadow"
+    android:elevation="4dp"
+    android:clipToPadding="false"
+    android:layout_margin="2dp"
+
+    android:layout_gravity="center"
+    >
 
     <ImageView
         android:id="@+id/ingredient_image"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_width="500px"
+        android:layout_height="350px"
+        android:layout_gravity="center"
         android:scaleType="centerCrop" />
 
     <TextView

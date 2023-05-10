@@ -24,7 +24,6 @@ public class SearchIngredientAdapter extends RecyclerView.Adapter<SearchIngredie
         this.ingredients = ingredients;
     }
 
-    @NonNull
     public IngredientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_api, parent, false);
         return new IngredientViewHolder(view);

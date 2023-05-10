@@ -25,10 +25,9 @@ public class SafeIngredientsAdapter extends RecyclerView.Adapter<SafeIngredients
     }
 
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingredient_card, parent, false);
         return new CardViewHolder(view);
     }
-
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
         IngredientR ingredient = ingredients.get(position);
         holder.title.setText(ingredient.getName());

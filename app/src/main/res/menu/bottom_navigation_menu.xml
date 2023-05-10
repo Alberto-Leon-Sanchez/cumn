@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/button1"
-        android:icon="@android:drawable/ic_menu_help"
-        android:title="Button 1" />
+        android:icon="@drawable/ingredientes"
+        android:title="Ingredients" />
 
     <item
         android:id="@+id/button2"
-        android:icon="@android:drawable/ic_menu_search"
-        android:title="Button 2" />
+        android:icon="@drawable/recetas"
+        android:title="Recipes" />
 
     <item
         android:id="@+id/button3"
-        android:icon="@android:drawable/ic_menu_compass"
-        android:title="Button 3" />
+        android:icon="@drawable/favorito"
+        android:title="Favourite Recipes" />
 </menu>

@@ -6,8 +6,12 @@ public class Ingredient {
 
     private String image;
 
-    public int getId() {
-        return id;
+    public Ingredient(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return String.valueOf(id);
     }
 
     public String getName() {

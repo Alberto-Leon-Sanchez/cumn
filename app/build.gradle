@@ -13,6 +13,11 @@ android {
         targetSdk 32
         versionCode 1
         versionName "1.0"
+        def apiToken = System.getenv("API_TOKEN") ?: ""
+        buildConfigField("String", "API_TOKEN", "\"${apiToken}\"")
+
+        def dbURL = project.findProperty("dbURL") ?: ""
+        buildConfigField("String", "DB_URL", "\"${dbURL}\"")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

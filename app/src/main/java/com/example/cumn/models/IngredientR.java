@@ -8,7 +8,7 @@ public class IngredientR {
     private String image;
 
     public IngredientR(Ingredient ingredient, int quantity) {
-        this.id = ingredient.getId();
+        this.id = Integer.valueOf(ingredient.getId());
         this.name = ingredient.getName();
         this.quantity = quantity;
         this.image = ingredient.getImage();

@@ -21,6 +21,9 @@ public class NavigationHandler {
                     }
                     break;
                 case R.id.button3:
+                    if (!(context instanceof FavouriteRecipes)) {
+                        context.startActivity(new Intent(context, FavouriteRecipes.class));
+                    }
                     break;
             }
             return true;

@@ -51,18 +51,18 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private FirebaseAuth mauth;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            startActivity(new Intent(MainActivity.this, AuthenticationActivity.class));
+            startActivity(new Intent(MainActivity.this, SignInSignUpActivity.class));
             finish();
         }
 
-        database = FirebaseDatabase.getInstance("https://cumn-cc19b-default-rtdb.europe-west1.firebasedatabase.app");
+
+        database = FirebaseDatabase.getInstance(BuildConfig.DB_URL);
         mauth = FirebaseAuth.getInstance();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
@@ -72,16 +72,27 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         cardTextList = new ArrayList<>();
 
-        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
+        TextView textView = findViewById(R.id.title);
+        textView.setText("Ingredients");
+
+        DatabaseReference ref = database.getReference("/ingredients/").child(mauth.getUid());
         ref.addValueEventListener(new ValueEventListener() {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 cardTextList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    IngredientR ingredientR = snapshot.getValue(IngredientR.class);
+                    Log.d(TAG, "onDataChange: " + snapshot);
+                    int id = snapshot.child("id").getValue(Integer.class);
+                    String name = snapshot.child("name").getValue(String.class);
+                    int quantity = snapshot.child("quantity").getValue(Integer.class);
+                    String image = snapshot.child("image").getValue(String.class);
+
+                    IngredientR ingredientR = new IngredientR(id, name, quantity, image);
                     cardTextList.add(ingredientR);
+
                 }
                 safeIngredientsAdapter.notifyDataSetChanged();
             }
+
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.w(TAG, "loadCardTextList:onCancelled", databaseError.toException());
                 Toast.makeText(MainActivity.this, "Failed to load card text list.", Toast.LENGTH_SHORT).show();
@@ -100,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
 
-            @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG, "onQueryTextChange: " + newText);
                 return false;
@@ -125,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         SpoonacularApi api = retrofit.create(SpoonacularApi.class);
-        Call<IngredientsResponse> call = api.searchIngredients("05b03e6e38be4044854648b70d8b126e", query);
+        Call<IngredientsResponse> call = api.searchIngredients(BuildConfig.API_TOKEN, query);
         Log.d(TAG, "searchIngredients: " + call.request().url());
         call.enqueue(new Callback<IngredientsResponse>() {
             @Override
@@ -230,21 +240,24 @@ public class MainActivity extends AppCompatActivity {
         IngredientR ingredient = cardTextList.get(position);
         ingredient.setQuantity(newQuantity);
         safeIngredientsAdapter.notifyItemChanged(position);
-        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
-        ref.setValue(cardTextList);
+        DatabaseReference ref = database.getReference("/ingredients").child(mauth.getUid()).child(String.valueOf(ingredient.getId()));
+        ref.setValue(ingredient);
     }
 
     private void addCard(Ingredient selectedIngredient, double quantityValue) {
-        cardTextList.add(new IngredientR(selectedIngredient, (int) quantityValue));
+        IngredientR newIngredientR = new IngredientR(selectedIngredient, (int) quantityValue);
+        cardTextList.add(newIngredientR);
         safeIngredientsAdapter.notifyItemInserted(cardTextList.size() - 1);
-        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
-        ref.setValue(cardTextList);
+        DatabaseReference ref = database.getReference("/ingredients").child(mauth.getUid()).child(selectedIngredient.getId());
+        ref.setValue(newIngredientR);
     }
 
     private void deleteCard(int position) {
+        IngredientR ingredient = cardTextList.get(position);
         cardTextList.remove(position);
         safeIngredientsAdapter.notifyItemRemoved(position);
-        DatabaseReference ref = database.getReference("/users/" + mauth.getUid() + "/cards");
-        ref.setValue(cardTextList);
+        DatabaseReference ref = database.getReference("/ingredients").child(mauth.getUid()).child(String.valueOf(ingredient.getId()));
+        ref.removeValue();
     }
+
 }
