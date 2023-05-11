@@ -14,7 +14,7 @@ public class LogoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo);
 
-        int duration = 2000;
+        int duration = 1250;
 
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(LogoActivity.this, MainActivity.class);

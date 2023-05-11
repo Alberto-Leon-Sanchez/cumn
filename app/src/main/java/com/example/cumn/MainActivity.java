@@ -2,20 +2,27 @@ package com.example.cumn;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -103,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(safeIngredientsAdapter);
 
         SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "onQueryTextSubmit: " + query);
                 searchIngredients(query);
@@ -113,9 +120,13 @@ public class MainActivity extends AppCompatActivity {
 
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG, "onQueryTextChange: " + newText);
+                
                 return false;
             }
         });
+
+
+
 
         safeIngredientsAdapter.setOnEditClickListener(position -> {
             IngredientR ingredientR = cardTextList.get(position);
@@ -259,5 +270,4 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference ref = database.getReference("/ingredients").child(mauth.getUid()).child(String.valueOf(ingredient.getId()));
         ref.removeValue();
     }
-
 }

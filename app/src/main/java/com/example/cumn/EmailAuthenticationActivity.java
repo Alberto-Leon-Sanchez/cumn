@@ -3,6 +3,7 @@ package com.example.cumn;
 import static android.content.ContentValues.TAG;
 
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -170,18 +171,24 @@ public class EmailAuthenticationActivity extends AppCompatActivity {
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "resetPasswordEmail:success");
-                                Toast.makeText(EmailAuthenticationActivity.this, "Password reset email sent.",
-                                        Toast.LENGTH_SHORT).show();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(EmailAuthenticationActivity.this);
+                                builder.setMessage("Password reset email sent.")
+                                        .setPositiveButton("OK", null)
+                                        .show();
                             } else {
                                 Log.w(TAG, "resetPasswordEmail:failure", task.getException());
-                                Toast.makeText(EmailAuthenticationActivity.this, "Failed to send password reset email.",
-                                        Toast.LENGTH_SHORT).show();
+                                if (task.getException() instanceof FirebaseAuthInvalidUserException) {
+                                    emailEditText.setError("This account does not exist.");
+                                } else {
+                                    emailEditText.setError("Failed to send password reset email.");
+                                }
                             }
                         });
             } else {
                 emailEditText.setError("Please enter your email.");
             }
         });
+
 
     }
 }

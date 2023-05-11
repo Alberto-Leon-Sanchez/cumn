@@ -90,6 +90,7 @@ public class FavouriteRecipes extends AppCompatActivity implements RecipeAdapter
                 return false;
             }
         });
+
     }
 
     private void showIngredientDialog(List<IngredientRecipe> ingredients) {
